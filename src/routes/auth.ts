@@ -3,6 +3,8 @@ import User from "../models/user";
 import jwt from "jsonwebtoken";
 import {check, validationResult} from "express-validator";
 import bcrypt from "bcryptjs"
+import { verify } from "crypto";
+import verifyToken from "../middleware/auth";
 const router = express.Router();
 
 router.post("/login", [
@@ -28,10 +30,15 @@ router.post("/login", [
         const token = jwt.sign({userId: user.id}, process.env.JWT_SECRET_KEY as string,{expiresIn: "1d"});
         res.cookie("auth_token", token , {httpOnly: true, secure: process.env.NODE_ENV === "production",maxAge: 86400000,});
         res.status(200).json({userId: user._id})
-    } catch (error) {
+    }  catch (error) {
         console.log(error);
         res.status(500).json({message : "Something went wrong"})
     }
 });
+
+//end point for validating token 
+router.get("/validate-token", verifyToken , (req: Request, res: Response) => {
+    res.status(200).send({userId: req.userId})
+})
 
 export default router;
