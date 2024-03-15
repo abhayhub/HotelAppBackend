@@ -3,7 +3,6 @@ import User from "../models/user";
 import jwt from "jsonwebtoken";
 import {check, validationResult} from "express-validator"
 const router = express.Router();
-const bodyParser = require("body-parser")
 
 
 router.post("/register", [
